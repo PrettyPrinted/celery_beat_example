@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST">
+        Start date: <input type="date" name="start_date">
+        Start time: <input type="time" name="start_time">
+        Frequency: <select name="frequency">
+            <option value="ONCE">Once</option>
+            <option value="HOURLY">Hourly</option>
+            <option value="DAILY">Daily</option>
+            <option value="WEEKLY">Weekly</option>
+            <option value="MONTHLY">Monthly</option>
+            <option value="YEARLY">Yearly</option>
+        </select>
+        Task: <select name="task">
+            <option value="">Select task</option>
+            {% for task in tasks %}
+                <option value="{{ task.id }}">{{ task.name }}</option>
+            {% endfor %}
+        </select>
+        Country: <input type="text" name="country">
+        <button>Submit</button>
+    </form>
+</body>
+</html>

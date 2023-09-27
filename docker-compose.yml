@@ -1,0 +1,47 @@
+services:
+  redis:
+    image: redis
+    volumes:
+        - redis_data:/data
+  web:
+    build:
+      context: .
+    environment:
+      FLASK_APP: run
+      FLASK_DEBUG: 1
+    volumes:
+      - .:/app
+    command: flask run -h 0.0.0.0
+    ports:
+      - 5000:5000
+  celery:
+    build:
+        context: .
+    environment:
+      FLASK_APP: run
+    volumes:
+      - .:/app
+    command: celery -A run.celery worker --loglevel=info
+    depends_on:
+      - redis
+  beat:
+    build:
+        context: .
+    environment:
+      FLASK_APP: run
+    volumes:
+      - .:/app
+    command: celery -A run.celery beat -S redbeat.RedBeatScheduler --max-interval 30 --loglevel=info
+    depends_on:
+      - celery
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+    - REDIS_HOSTS=local:redis:6379
+    ports:
+    - "8081:8081"
+volumes:
+    redis_data:
